@@ -32,20 +32,28 @@ class BluetoothRepositoryImpl implements BluetoothRepository {
   }
 
   @override
-  Future<List<DiscoveredDevice>> findAllDevices() async {
+  Future<Map<String, DiscoveredDevice>> findAllDevices() async {
     bool permissionGranted = await requestForBluetoothPermission();
 
     if (permissionGranted) {
-      return await _ble
+      final list = await _ble
           .scanForDevices(
             withServices: [],
             scanMode: ScanMode.balanced,
           )
           .where((device) => device.name.isNotEmpty)
           .toList();
+
+      final devices = <String, DiscoveredDevice>{};
+
+      for (final item in list) {
+        devices[item.id] = item;
+      }
+
+      return devices;
     }
 
-    return const [];
+    return const {};
   }
 
   @override
@@ -55,7 +63,7 @@ class BluetoothRepositoryImpl implements BluetoothRepository {
     return _ble.connectToAdvertisingDevice(
       id: device.id,
       withServices: [],
-      connectionTimeout: const Duration(seconds: 5),
+      connectionTimeout: const Duration(seconds: 6),
       prescanDuration: const Duration(seconds: 5),
     );
   }

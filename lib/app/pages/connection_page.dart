@@ -18,7 +18,7 @@ class _ConnectionPageState extends State<ConnectionPage> with Messages {
 
   final bluetoothRepository = BluetoothRepositoryImpl();
 
-  List<DiscoveredDevice> devices = [];
+  Map<String, DiscoveredDevice> devices = {};
 
   scanDevices() async {
     final result = await bluetoothRepository.findAllDevices();
@@ -70,9 +70,10 @@ class _ConnectionPageState extends State<ConnectionPage> with Messages {
       body: ListView.builder(
         itemCount: devices.length,
         itemBuilder: (context, index) {
-          final device = devices[index];
+          final keys = devices.keys.toList();
+          final device = devices[keys[index]];
           return BluetoothDevice(
-            device: device,
+            device: device!,
             onPressed: () => handleConnection(device),
           );
         },
