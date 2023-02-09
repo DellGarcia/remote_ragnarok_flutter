@@ -1,56 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:remote_ragnarok_flutter/widgets/custom_button/custom_button.dart';
-import 'package:remote_ragnarok_flutter/widgets/dpad/dpad.dart';
+import 'package:provider/provider.dart';
+import 'package:remote_ragnarok_flutter/app/core/repositories/bluetooth_repository_impl.dart';
+import 'package:remote_ragnarok_flutter/app/core/ui/theme/theme_config.dart';
+import 'package:remote_ragnarok_flutter/app/pages/connection_page.dart';
+import 'package:remote_ragnarok_flutter/app/pages/remote_control_page.dart';
+
+import 'app/core/provider/application_bindinds.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const RemoteRagnarokApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RemoteRagnarokApp extends StatelessWidget {
+  const RemoteRagnarokApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.amber,
-        scaffoldBackgroundColor: Colors.grey[800],
-      ),
-      darkTheme: ThemeData.dark(),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  void initState() {
-    super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: const Center(
-        child: DPad(),
+    return ApplicationBindinds(
+      child: Provider(
+        create: (context) => BluetoothRepositoryImpl(),
+        child: MaterialApp(
+          title: 'Remote Ragnarok App',
+          theme: ThemeConfig.theme,
+          //darkTheme: ThemeData.dark(),
+          routes: {
+            '/': (context) => const ConnectionPage(),
+            '/remote': (context) => const RemoteControlPage(),
+          },
+        ),
       ),
     );
   }
